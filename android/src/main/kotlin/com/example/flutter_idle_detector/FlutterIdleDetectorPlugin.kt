@@ -46,8 +46,6 @@ class FlutterIdleDetectorPlugin: FlutterPlugin, ActivityAware {
     }
 
     override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {}
-
     override fun onDetachedFromActivityForConfigChanges() {}
-
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {}
 }
