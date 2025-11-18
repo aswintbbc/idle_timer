@@ -47,7 +47,7 @@
       "name": "flutter_idle_detector",
       "rootUri": "../",
       "packageUri": "lib/",
-      "languageVersion": "2.12"
+      "languageVersion": "3.8"
     }
   ],
   "generator": "pub",
