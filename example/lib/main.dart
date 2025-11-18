@@ -5,7 +5,7 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
   IdleTimer.initialize(
-    timeout: Duration(seconds: 2),
+    timeout: Duration(seconds: 10),
     onIdle: () {
       navigatorKey.currentState?.pushNamed("/idle");
     },

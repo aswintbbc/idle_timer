@@ -12,16 +12,20 @@ class FlutterIdleDetectorPlugin : FlutterPlugin, ActivityAware {
 
     private lateinit var channel: MethodChannel
     private var lastInteraction = System.currentTimeMillis()
-    private var timeout: Long = 120_000L // default = 2 minutes
+    private var timeout: Long = 120_000L // default 2 minutes
     private val handler = Handler(Looper.getMainLooper())
     private var activityBinding: ActivityPluginBinding? = null
 
+    /// Runnable that checks idle state every 1 second
     private val idleCheckRunnable = object : Runnable {
         override fun run() {
             val now = System.currentTimeMillis()
-            if (now - lastInteraction >= timeout) {
+            val elapsed = now - lastInteraction
+
+            if (elapsed >= timeout) {
                 channel.invokeMethod("idle", null)
             }
+
             handler.postDelayed(this, 1000)
         }
     }
@@ -29,17 +33,18 @@ class FlutterIdleDetectorPlugin : FlutterPlugin, ActivityAware {
     override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
         channel = MethodChannel(binding.binaryMessenger, "flutter_idle_detector")
 
-        // Handle messages coming from Flutter
         channel.setMethodCallHandler { call, result ->
             when (call.method) {
+
                 "setTimeout" -> {
                     val ms = call.arguments as Int
                     timeout = ms.toLong()
+                    resetTimer()
                     result.success(null)
                 }
 
                 "reset" -> {
-                    lastInteraction = System.currentTimeMillis()
+                    resetTimer()
                     result.success(null)
                 }
 
@@ -51,19 +56,20 @@ class FlutterIdleDetectorPlugin : FlutterPlugin, ActivityAware {
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
         activityBinding = binding
 
-        // Capture ALL touch events (WebView, PlatformViews, SDKs)
+        /// Capture ALL touch events including WebView & SDK screens
         binding.activity.window.decorView.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_DOWN) {
-                lastInteraction = System.currentTimeMillis()
+                resetTimer()
             }
             false
         }
 
-        handler.post(idleCheckRunnable)
+        /// Always restart timer loop safely
+        restartIdleLoop()
     }
 
     override fun onDetachedFromActivity() {
-        handler.removeCallbacks(idleCheckRunnable)
+        stopIdleLoop()
         activityBinding = null
     }
 
@@ -72,10 +78,28 @@ class FlutterIdleDetectorPlugin : FlutterPlugin, ActivityAware {
     }
 
     override fun onDetachedFromActivityForConfigChanges() {
-        handler.removeCallbacks(idleCheckRunnable)
+        stopIdleLoop()
     }
 
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
+        stopIdleLoop()
+    }
+
+    // --------------------------------------------------------------
+    // Helper Functions
+    // --------------------------------------------------------------
+
+    private fun resetTimer() {
+        lastInteraction = System.currentTimeMillis()
+    }
+
+    private fun restartIdleLoop() {
+        handler.removeCallbacks(idleCheckRunnable)
+        handler.post(idleCheckRunnable)
+        resetTimer()
+    }
+
+    private fun stopIdleLoop() {
         handler.removeCallbacks(idleCheckRunnable)
     }
 }
