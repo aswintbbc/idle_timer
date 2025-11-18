@@ -4,7 +4,8 @@ import 'package:flutter_idle_detector/flutter_idle_detector.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
-  FlutterIdleDetector.initialize(
+  IdleTimer.initialize(
+    timeout: Duration(seconds: 2),
     onIdle: () {
       navigatorKey.currentState?.pushNamed("/idle");
     },
