@@ -1,0 +1,14 @@
+name: flutter_idle_detector
+description: Flutter idle detector plugin
+version: 1.0.1
+homepage: https://github.com/aswintbbc/idle_timer
+environment:
+  sdk: ">=2.12.0 <4.0.0"
+flutter:
+  plugin:
+    platforms:
+      android:
+        package: com.example.flutter_idle_detector
+        pluginClass: FlutterIdleDetectorPlugin
+      ios:
+        pluginClass: FlutterIdleDetectorPlugin

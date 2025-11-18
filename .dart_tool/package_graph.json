@@ -1,0 +1,14 @@
+{
+  "roots": [
+    "flutter_idle_detector"
+  ],
+  "packages": [
+    {
+      "name": "flutter_idle_detector",
+      "version": "1.0.1",
+      "dependencies": [],
+      "devDependencies": []
+    }
+  ],
+  "configVersion": 1
+}
