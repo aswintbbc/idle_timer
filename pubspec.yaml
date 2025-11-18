@@ -12,3 +12,6 @@ flutter:
         pluginClass: FlutterIdleDetectorPlugin
       ios:
         pluginClass: FlutterIdleDetectorPlugin
+dependencies:
+  flutter:
+    sdk: flutter
