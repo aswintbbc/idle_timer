@@ -2,7 +2,9 @@ package com.example.flutter_idle_detector
 
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.MotionEvent
+import android.view.Window
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -12,20 +14,16 @@ class FlutterIdleDetectorPlugin : FlutterPlugin, ActivityAware {
 
     private lateinit var channel: MethodChannel
     private var lastInteraction = System.currentTimeMillis()
-    private var timeout: Long = 120_000L // default 2 minutes
+    private var timeout: Long = 120_000L // default 2 min
     private val handler = Handler(Looper.getMainLooper())
     private var activityBinding: ActivityPluginBinding? = null
 
-    /// Runnable that checks idle state every 1 second
     private val idleCheckRunnable = object : Runnable {
         override fun run() {
             val now = System.currentTimeMillis()
-            val elapsed = now - lastInteraction
-
-            if (elapsed >= timeout) {
+            if (now - lastInteraction >= timeout) {
                 channel.invokeMethod("idle", null)
             }
-
             handler.postDelayed(this, 1000)
         }
     }
@@ -56,15 +54,7 @@ class FlutterIdleDetectorPlugin : FlutterPlugin, ActivityAware {
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
         activityBinding = binding
 
-        /// Capture ALL touch events including WebView & SDK screens
-        binding.activity.window.decorView.setOnTouchListener { _, event ->
-            if (event.action == MotionEvent.ACTION_DOWN) {
-                resetTimer()
-            }
-            false
-        }
-
-        /// Always restart timer loop safely
+        installGlobalTouchListener(binding.activity.window)
         restartIdleLoop()
     }
 
@@ -85,12 +75,31 @@ class FlutterIdleDetectorPlugin : FlutterPlugin, ActivityAware {
         stopIdleLoop()
     }
 
-    // --------------------------------------------------------------
-    // Helper Functions
-    // --------------------------------------------------------------
+    // -----------------------------------------------------
+    //  GLOBAL TOUCH HOOK (Works inside ALL SDK Views!!)
+    // -----------------------------------------------------
+    private fun installGlobalTouchListener(window: Window) {
+        val originalCallback = window.callback
 
+        window.callback = object : Window.Callback by originalCallback {
+            override fun dispatchTouchEvent(event: MotionEvent): Boolean {
+                if (event.action == MotionEvent.ACTION_DOWN ||
+                    event.action == MotionEvent.ACTION_MOVE ||
+                    event.action == MotionEvent.ACTION_UP
+                ) {
+                    resetTimer()
+                }
+                return originalCallback.dispatchTouchEvent(event)
+            }
+        }
+    }
+
+    // -----------------------------------------------------
+    // Helpers
+    // -----------------------------------------------------
     private fun resetTimer() {
         lastInteraction = System.currentTimeMillis()
+        Log.d("IdlePlugin", "Timer Reset")
     }
 
     private fun restartIdleLoop() {

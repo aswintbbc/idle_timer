@@ -5,7 +5,7 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
   IdleTimer.initialize(
-    timeout: Duration(seconds: 10),
+    timeout: Duration(seconds: 5),
     onIdle: () {
       navigatorKey.currentState?.pushNamed("/idle");
     },
@@ -36,7 +36,10 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Idle Timer Example")),
-      body: const Center(
+      body: ElevatedButton(
+        onPressed: () {
+          print('tap');
+        },
         child: Text("Interact with the app to avoid idle trigger"),
       ),
     );
@@ -51,6 +54,13 @@ class IdleScreen extends StatelessWidget {
     return Scaffold(
       body: Center(
         child: Text("User is idle!", style: TextStyle(fontSize: 24)),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          IdleTimer.reset();
+          navigatorKey.currentState?.pushNamed("/");
+        },
+        child: Icon(Icons.home),
       ),
     );
   }

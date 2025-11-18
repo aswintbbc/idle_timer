@@ -3,16 +3,13 @@ import UIKit
 
 public class FlutterIdleDetectorPlugin: NSObject, FlutterPlugin {
 
-    // MARK: - State
     static var channel: FlutterMethodChannel?
     static var lastTouch: TimeInterval = Date().timeIntervalSince1970
     static var timeout: TimeInterval = 120 // seconds
     static var timerStarted = false
 
-    // MARK: - Plugin Registration
     public static func register(with registrar: FlutterPluginRegistrar) {
 
-        // Reset timer on plugin attach (hot restart, app resume, etc.)
         lastTouch = Date().timeIntervalSince1970
 
         channel = FlutterMethodChannel(
@@ -24,10 +21,9 @@ public class FlutterIdleDetectorPlugin: NSObject, FlutterPlugin {
         registrar.addMethodCallDelegate(instance, channel: channel!)
 
         startIdleTimerIfNeeded()
-        swizzleTouchEvents()
+        swizzleEvents()
     }
 
-    // MARK: - Handle Calls From Flutter
     public func handle(_ call: FlutterMethodCall, result: FlutterResult) {
         switch call.method {
 
@@ -47,44 +43,44 @@ public class FlutterIdleDetectorPlugin: NSObject, FlutterPlugin {
         }
     }
 
-    // MARK: - Timer Loop
+    // -----------------------------------------------------
+    //  Global Timer Loop
+    // -----------------------------------------------------
     private static func startIdleTimerIfNeeded() {
         if timerStarted { return }
         timerStarted = true
 
         Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
-            let now = Date().timeIntervalSince1970
-            let elapsed = now - lastTouch
-
+            let elapsed = Date().timeIntervalSince1970 - lastTouch
             if elapsed >= timeout {
                 channel?.invokeMethod("idle", arguments: nil)
             }
         }
     }
 
-    // MARK: - Touch Event Swizzling
-    private static func swizzleTouchEvents() {
-
+    // -----------------------------------------------------
+    //  Touch Swizzling
+    // -----------------------------------------------------
+    private static func swizzleEvents() {
         guard
-            let originalMethod = class_getInstanceMethod(
-                UIApplication.self,
-                #selector(UIApplication.sendEvent(_:))
-            ),
-            let swizzledMethod = class_getInstanceMethod(
-                UIApplication.self,
-                #selector(UIApplication.swizzled_sendEvent(_:))
-            )
+            let original = class_getInstanceMethod(UIApplication.self,
+                #selector(UIApplication.sendEvent(_:))),
+            let swizzled = class_getInstanceMethod(UIApplication.self,
+                #selector(UIApplication.swizzled_sendEvent(_:)))
         else { return }
 
-        method_exchangeImplementations(originalMethod, swizzledMethod)
+        method_exchangeImplementations(original, swizzled)
     }
 }
 
 extension UIApplication {
 
-    // Intercepts all touches, including WKWebView
     @objc func swizzled_sendEvent(_ event: UIEvent) {
-        FlutterIdleDetectorPlugin.lastTouch = Date().timeIntervalSince1970
+        if let touch = event.allTouches?.first,
+           touch.phase == .began || touch.phase == .moved || touch.phase == .ended {
+            FlutterIdleDetectorPlugin.lastTouch = Date().timeIntervalSince1970
+        }
+
         self.swizzled_sendEvent(event)
     }
 }
