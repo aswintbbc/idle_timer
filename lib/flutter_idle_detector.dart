@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 
 class IdleTimer {
   static const MethodChannel _channel = MethodChannel('flutter_idle_detector');
-  static ValueNotifier<bool> isIdle = ValueNotifier(false);
+  static ValueNotifier<bool> isChecking = ValueNotifier(false);
   static void initialize({
     required void Function() onIdle,
     Duration timeout = const Duration(minutes: 2),
@@ -11,15 +11,15 @@ class IdleTimer {
     _channel.invokeMethod("setTimeout", timeout.inMilliseconds);
 
     _channel.setMethodCallHandler((call) async {
-      if (call.method == "idle" && !isIdle.value) {
-        isIdle.value = true;
+      if (call.method == "idle" && !isChecking.value) {
+        isChecking.value = true;
         onIdle();
       }
     });
   }
 
   static Future<void> start() async {
-    isIdle.value = false;
+    isChecking.value = false;
     await _channel.invokeMethod("start");
   }
 
@@ -28,7 +28,7 @@ class IdleTimer {
   }
 
   static Future<void> reset() async {
-    isIdle.value = false;
+    isChecking.value = false;
     await _channel.invokeMethod("reset");
   }
 }

@@ -37,18 +37,26 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text("Idle Timer Example")),
       body: Center(
-        child: ValueListenableBuilder(
-            valueListenable: IdleTimer.isIdle,
-            builder: (context, value, child) {
-              return ElevatedButton(
-                onPressed: () {
-                  print('tap');
+        child: Column(
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                print('tap');
 
-                  IdleTimer.start();
-                },
-                child: Text(value ? "User is idle" : "User is active"),
-              );
-            }),
+                IdleTimer.start();
+              },
+              child: Text("start"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                print('tap');
+
+                IdleTimer.stop();
+              },
+              child: Text("stop"),
+            ),
+          ],
+        ),
       ),
     );
   }
