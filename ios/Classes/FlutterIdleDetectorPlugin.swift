@@ -1,4 +1,3 @@
-// ios/Classes/FlutterIdleDetectorPlugin.swift
 import Flutter
 import UIKit
 
@@ -11,9 +10,11 @@ public class FlutterIdleDetectorPlugin: NSObject, FlutterPlugin {
     static var timerStarted = false
 
     public static func register(with registrar: FlutterPluginRegistrar) {
+
         channel = FlutterMethodChannel(name: "flutter_idle_detector", binaryMessenger: registrar.messenger())
         let instance = FlutterIdleDetectorPlugin()
         registrar.addMethodCallDelegate(instance, channel: channel!)
+
         startTimerLoop()
         swizzleTouch()
         print("IdlePlugin: registered")
@@ -22,6 +23,7 @@ public class FlutterIdleDetectorPlugin: NSObject, FlutterPlugin {
     public func handle(_ call: FlutterMethodCall, result: FlutterResult) {
         print("IdlePlugin: method \(call.method) args: \(String(describing: call.arguments))")
         switch call.method {
+
         case "setTimeout":
             if let ms = call.arguments as? Int {
                 FlutterIdleDetectorPlugin.timeout = TimeInterval(ms) / 1000.0
@@ -31,19 +33,23 @@ public class FlutterIdleDetectorPlugin: NSObject, FlutterPlugin {
             FlutterIdleDetectorPlugin.lastTouch = Date().timeIntervalSince1970
             print("IdlePlugin: timeout set to \(FlutterIdleDetectorPlugin.timeout) seconds")
             result(nil)
+
         case "start":
             FlutterIdleDetectorPlugin.monitoring = true
             FlutterIdleDetectorPlugin.lastTouch = Date().timeIntervalSince1970
             print("IdlePlugin: monitoring STARTED")
             result(nil)
+
         case "stop":
             FlutterIdleDetectorPlugin.monitoring = false
             print("IdlePlugin: monitoring STOPPED")
             result(nil)
+
         case "reset":
             FlutterIdleDetectorPlugin.lastTouch = Date().timeIntervalSince1970
             print("IdlePlugin: RESET")
             result(nil)
+
         default:
             result(FlutterMethodNotImplemented)
         }
@@ -79,7 +85,6 @@ extension UIApplication {
            let touch = event.allTouches?.first,
            touch.phase == .began || touch.phase == .moved || touch.phase == .ended {
             FlutterIdleDetectorPlugin.lastTouch = Date().timeIntervalSince1970
-            // print to Xcode console
             print("IdlePlugin: touch -> reset lastTouch")
         }
         self.swizzled_sendEvent(event)

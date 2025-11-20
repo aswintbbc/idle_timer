@@ -45,7 +45,7 @@ class HomeScreen extends StatelessWidget {
 
                 IdleTimer.start();
               },
-              child: Text("start"),
+              child: Text("start ${IdleTimer.isChecking}"),
             ),
             ElevatedButton(
               onPressed: () {
