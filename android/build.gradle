@@ -1,4 +1,4 @@
-group 'com.example.flutter_idle_detector'
+group 'com.mindster.flutter_idle_detector'
 version '1.0-SNAPSHOT'
 
 buildscript {
@@ -16,7 +16,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    namespace "com.example.flutter_idle_detector"
+    namespace "com.mindster.flutter_idle_detector"
     compileSdkVersion 34
 
     defaultConfig {

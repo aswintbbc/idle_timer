@@ -1,17 +1,33 @@
 name: flutter_idle_detector
-description: Flutter idle detector plugin
-version: 1.0.1
-homepage: https://github.com/aswintbbc/idle_timer
+description: A Flutter plugin that provides native-level idle user detection with start/stop/reset and WebView-safe touch monitoring.
+version: 1.0.0
+homepage: https://github.com/aswintbbc/flutter_idle_detector
+repository: https://github.com/aswintbbc/flutter_idle_detector
+issue_tracker: https://github.com/aswintbbc/flutter_idle_detector/issues
+topics:
+  - idle
+  - timer
+  - security
+  - session-timeout
+
 environment:
-  sdk: ^3.8.1
+  sdk: ">=3.0.0 <4.0.0"
+  flutter: ">=3.0.0"
+
 flutter:
   plugin:
     platforms:
       android:
-        package: com.example.flutter_idle_detector
+        package: com.mindster.flutter_idle_detector
         pluginClass: FlutterIdleDetectorPlugin
       ios:
         pluginClass: FlutterIdleDetectorPlugin
+
 dependencies:
   flutter:
     sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0

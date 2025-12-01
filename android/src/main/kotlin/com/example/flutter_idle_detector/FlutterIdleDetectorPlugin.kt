@@ -1,5 +1,5 @@
 // android/src/main/kotlin/com/example/flutter_idle_detector/FlutterIdleDetectorPlugin.kt
-package com.example.flutter_idle_detector
+package com.mindster.flutter_idle_detector
 
 import android.os.Handler
 import android.os.Looper
