@@ -28,7 +28,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "1.0.1"
+    version: "1.0.0"
   material_color_utilities:
     dependency: transitive
     description:
@@ -59,4 +59,5 @@ packages:
     source: hosted
     version: "2.1.4"
 sdks:
-  dart: ">=3.8.1 <4.0.0"
+  dart: ">=3.7.0-0 <4.0.0"
+  flutter: ">=3.0.0"

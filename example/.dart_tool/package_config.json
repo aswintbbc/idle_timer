@@ -23,7 +23,7 @@
       "name": "flutter_idle_detector",
       "rootUri": "../../",
       "packageUri": "lib/",
-      "languageVersion": "3.8"
+      "languageVersion": "3.0"
     },
     {
       "name": "material_color_utilities",
