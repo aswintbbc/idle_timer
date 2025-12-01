@@ -100,3 +100,15 @@ Start when needed:
 ```dart
 IdleTimer.start();
 ```
+
+## Additional Information
+
+- **Contributing**: Contributions are welcome! Feel free to submit issues or pull requests.
+- **License**: This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+- **Support**: For any issues or feature requests, please open an issue on [GitHub](https://github.com/aswintbbc/flutter_idle_detector/issues).
+
+Happy coding! I don't want coffee 😊
+
+[contact us](https://mindster.com/)
+
+<img src="https://github.com/mindsterapps/chaty/blob/main/screenshots/mindster.png?raw=true" alt="logo" />
