@@ -1,0 +1,19 @@
+# Ignore macOS junk
+
+.DS_Store
+
+# Ignore Flutter generated plugin files
+
+.example/.flutter-plugins
+example/.flutter-plugins-dependencies
+example/.metadata
+
+# Ignore Dart tool files
+
+example/.dart_tool/
+.dart_tool/
+
+# Ignore build outputs
+
+build/
+example/build/
